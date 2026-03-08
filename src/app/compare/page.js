@@ -9,7 +9,7 @@ export const metadata = {
 
 async function getPlayerStats(id) {
     if (!id) return null;
-    const player = await queryOne('SELECT p.name, p.position, p.height, p.age, t.name as team_name FROM Players p JOIN Teams t ON p.team_id = t.id WHERE p.player_id = ?', [id]);
+    const player = await queryOne('SELECT p.player_id, p.name, t.name as team_name FROM Players p JOIN Teams t ON p.team_id = t.id WHERE p.player_id = ?', [id]);
     if (!player) return null;
 
     const logs = await query('SELECT * FROM Boxscores WHERE player_id = ?', [id]);
@@ -78,9 +78,40 @@ export default async function ComparePage({ searchParams }) {
 
     return (
         <div className="compare-dashboard animate-fade-in">
-            <div className="page-header" style={{ marginBottom: '2rem' }}>
+            <div className="page-header" style={{ marginBottom: '1rem' }}>
                 <h1>Head-to-Head Comparison</h1>
                 <p className="subtitle" style={{ color: 'var(--text-muted)' }}>Select two players to compare their advanced career metrics.</p>
+            </div>
+
+            {/* Sub-Navigation Toggle (Pill Style) */}
+            <div style={{ display: 'flex', background: 'rgba(0,0,0,0.5)', padding: '4px', borderRadius: '12px', width: 'fit-content', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '2rem' }}>
+                <Link href="/compare" style={{ 
+                    padding: '8px 24px', 
+                    borderRadius: '8px', 
+                    background: 'var(--tappa-orange)', 
+                    color: 'white', 
+                    fontWeight: '800', 
+                    fontSize: '0.75rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    textDecoration: 'none',
+                    boxShadow: '0 4px 12px rgba(209, 107, 7, 0.3)'
+                }}>
+                    Players
+                </Link>
+                <Link href="/compare/teams" style={{ 
+                    padding: '8px 24px', 
+                    borderRadius: '8px', 
+                    background: 'transparent', 
+                    color: 'var(--text-secondary)', 
+                    fontWeight: '800', 
+                    fontSize: '0.75rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    textDecoration: 'none'
+                }} className="hover-white">
+                    Teams
+                </Link>
             </div>
 
             {/* Selectors */}
@@ -118,12 +149,12 @@ export default async function ComparePage({ searchParams }) {
                             <tr>
                                 <th style={{ textAlign: 'center', fontSize: '1.5rem', color: 'white', borderBottom: '2px solid var(--tappa-orange)' }}>
                                     <Link href={`/players/${player1.id}`}>{player1.name}</Link>
-                                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 400 }}>{player1.team_name}</div>
+                                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 400 }}>{player1.team_name} | {player1.gender === 'Women' ? "Women's" : "Men's"}</div>
                                 </th>
                                 <th style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-secondary)', borderBottom: '2px solid var(--border-glass)' }}>VS</th>
                                 <th style={{ textAlign: 'center', fontSize: '1.5rem', color: 'white', borderBottom: '2px solid var(--tappa-orange)' }}>
                                     <Link href={`/players/${player2.id}`}>{player2.name}</Link>
-                                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 400 }}>{player2.team_name}</div>
+                                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 400 }}>{player2.team_name} | {player2.gender === 'Women' ? "Women's" : "Men's"}</div>
                                 </th>
                             </tr>
                         </thead>

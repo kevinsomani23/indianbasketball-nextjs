@@ -1,18 +1,31 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Montserrat:wght@400;600;700;800&display=swap');
 
 :root {
-  --tappa-orange: #ff8533;
-  --tappa-orange-glow: rgba(255, 133, 51, 0.4);
-  --bg-glass: rgba(18, 18, 18, 0.85);
-  --border-glass: rgba(255, 255, 255, 0.1);
+  --tappa-orange: #d16b07; /* Extracted exact brand orange from GitHub repo */
+  --tappa-orange-glow: rgba(209, 107, 7, 0.4);
+  --bg-glass: rgba(24, 24, 27, 0.85); /* Tailwind panel / zinc-900 equivalent */
+  --border-glass: rgba(255, 255, 255, 0.08); /* More subtle borders */
   --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
-  --text-muted: #707070;
-  --accent-glow: 0 0 20px rgba(255, 133, 51, 0.25);
-  --success: #4CAF50;
-  --warning: #FF9800;
-  --dark-bg: #0e1117;
-  --dark-panel: #1a1a1a;
+  --text-secondary: #a1a1aa; /* text-zinc-400 */
+  --text-muted: #71717a; /* text-zinc-500 */
+  --accent-glow: 0 0 20px rgba(209, 107, 7, 0.25);
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --elevation-1: #18181b; 
+  --dark-bg: #09090b; /* Deep zinc background */
+  --dark-panel: #18181b; /* Card panel background */
+  
+  /* Semantic Accent Colors */
+  --women-accent: #ec4899;
+  --stat-pts: #22d3ee;
+  --stat-ast: #22c55e;
+  --stat-reb: #10b981;
+  --medal-gold: #c9a84c;
+  --medal-silver: #94a3b8;
+  --medal-bronze: #b45309;
+  --badge-td: #8b5cf6;
+  --badge-dd: #3b82f6;
 }
 
 * {
@@ -41,23 +54,52 @@ a:hover {
   color: var(--tappa-orange);
 }
 
-/* Glass Card System */
-.glass-card {
-  background: var(--bg-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-glass);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
-  padding: 1.5rem;
+/* View Transitions */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.4s;
 }
 
-/* Table System (BBRef Style but Premium) */
+.match-card {
+    view-transition-name: match-card;
+}
+
+.team-logo-img {
+    view-transition-name: team-logo;
+}
+
+.player-name-header {
+    view-transition-name: player-name;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Premium Card System */
+.glass-card {
+  background: var(--dark-panel);
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(209, 107, 7, 0.3);
+}
+
+/* Table System (Minimalist Analytics Style) */
 .data-table-container {
   overflow-x: auto;
   border-radius: 8px;
-  border: 1px solid var(--border-glass);
-  background: var(--dark-panel);
+  background: var(--dark-bg); /* Match app background instead of panel */
 }
 
 .data-table {
@@ -67,12 +109,12 @@ a:hover {
 }
 
 .data-table th {
-  background-color: #0f0f0f;
-  color: #b0b0b0;
-  font-weight: bold;
+  background-color: var(--dark-bg);
+  color: var(--text-muted);
+  font-weight: 500;
   text-align: right;
-  padding: 0.5rem 0.75rem;
-  border-bottom: 2px solid var(--border-glass);
+  padding: 0.75rem;
+  border-bottom: 1px solid #2A2A2A;
   font-family: 'Space Grotesk', sans-serif;
   white-space: nowrap;
   position: sticky;
@@ -85,11 +127,11 @@ a:hover {
 }
 
 .data-table td {
-  padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid var(--border-glass);
-  color: white;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid #1f1f22; /* Extremely subtle row separation */
+  color: #ffffff; /* Bright, undimmed text */
   text-align: right;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Space Mono', monospace;
   white-space: nowrap;
 }
 
@@ -97,28 +139,159 @@ a:hover {
   text-align: left;
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 500;
+  color: white; /* Player names stay white */
 }
 
 .data-table tbody tr:hover {
-  background-color: #252525;
+  background-color: rgba(255, 255, 255, 0.02);
 }
 
-/* Highlighted or Leader Cell */
+/* Highlighted Top Scorers/Performers */
+.data-table tr.top-performer {
+  background-color: rgba(209, 107, 7, 0.03); /* Subtle orange wash built from var(--tappa-orange) */
+}
+
+.data-table tr.top-performer:hover {
+  background-color: rgba(209, 107, 7, 0.06);
+}
+
 .data-table td.leader {
-  background: rgba(255, 133, 51, 0.2);
-  color: var(--tappa-orange);
+  color: white; /* Bright white instead of orange to keep it clean */
   font-weight: 700;
 }
 
-/* Scrollbar */
+.data-table tr.top-performer .leader {
+  color: var(--tappa-orange);
+}
+
+/* Shooting Splits Hierarchy */
+.data-table td.split-col {
+  color: rgba(255, 255, 255, 0.85); /* Undimmed split columns */
+}
+
+.data-table td.pct-col {
+  color: white;
+  font-weight: 600;
+}
+
+/* Team High Highlight (Max value in column) — solid orange badge */
+.data-table td.team-high {
+  color: white !important;
+  font-weight: 900;
+  background-color: var(--tappa-orange);
+  border-radius: 4px;
+}
+
+
+/* Action Interaction Utilities */
+.hover-glow {
+    position: relative;
+    overflow: hidden;
+}
+
+.hover-glow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(209, 107, 7, 0.08) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.hover-glow:hover::before {
+    opacity: 1;
+}
+
+.hover-glow:hover {
+    border-color: rgba(209, 107, 7, 0.4) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+.hover-white:hover {
+    color: white !important;
+}
+
+/* Scrollbar Matching the Repo */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: var(--tappa-orange); }
+::-webkit-scrollbar-track { background: var(--dark-bg); }
+::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Montserrat', sans-serif;
-  margin-bottom: 1rem;
+  font-family: 'Space Grotesk', sans-serif;
   letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+
+/* Match card hover (used in MatchList server component — no JS events) */
+.match-card-hover:hover {
+    border-color: rgba(255,255,255,0.12) !important;
+    background-color: #181b1f !important;
+}
+
+/* Match row hover for list-style layout */
+.match-row-hover:hover {
+    background-color: #181b1f !important;
+}
+.match-row-hover:hover span {
+    color: rgba(255,255,255,0.5) !important;
+}
+
+/* Horizontal Tray UI */
+.tray-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 2rem;
+    padding: 1.5rem 1rem 2.5rem 1rem; /* More generous vertical/horizontal padding */
+    margin: -1.5rem -1rem -1rem -1rem; /* Negative margin to offset padding */
+    scrollbar-width: thin;
+    scrollbar-color: #27272a transparent;
+}
+
+.tray-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.tray-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.tray-container::-webkit-scrollbar-thumb {
+    background: #27272a;
+    border-radius: 10px;
+}
+
+.tray-container::-webkit-scrollbar-thumb:hover {
+    background: #3f3f46;
+}
+
+.tray-item {
+    flex: 0 0 auto;
+    width: 300px; /* Match TournamentCard width */
+    position: relative;
+    z-index: 1;
+}
+
+.tray-item:hover {
+    z-index: 2; /* Ensure hovered item is on top */
+}
+
+.player-tray-card {
+    width: 220px;
+    background: var(--dark-panel);
+    border: 1px solid var(--border-glass);
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+    transition: all 0.2s;
+    flex: 0 0 auto;
+}
+
+.player-tray-card:hover {
+    border-color: var(--tappa-orange-glow);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
 }
